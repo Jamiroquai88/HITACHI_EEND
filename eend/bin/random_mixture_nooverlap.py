@@ -49,6 +49,9 @@ import numpy as np
 import json
 import itertools
 
+import sys
+sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
+
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir',
                     help='data dir of single-speaker recordings')

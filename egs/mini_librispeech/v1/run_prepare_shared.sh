@@ -29,7 +29,7 @@ simu_opts_max_utts=20
 
 . path.sh
 . cmd.sh
-. parse_options.sh || exit
+. utils/parse_options.sh || exit
 
 if [ $stage -le 0 ]; then
     echo "prepare kaldi-style datasets"
@@ -67,11 +67,11 @@ simudir=data/simu
 if [ $stage -le 1 ]; then
     echo "simulation of mixture"
     mkdir -p $simudir/.work
-    random_mixture_cmd=random_mixture_nooverlap.py
-    make_mixture_cmd=make_mixture_nooverlap.py
+    random_mixture_cmd=../../../eend/bin/random_mixture_nooverlap.py
+    make_mixture_cmd=../../../eend/bin/make_mixture_nooverlap.py
     if [ "$simu_opts_overlap" == "yes" ]; then
-        random_mixture_cmd=random_mixture.py
-        make_mixture_cmd=make_mixture.py
+        random_mixture_cmd=../../../eend/bin/random_mixture.py
+        make_mixture_cmd=../../../eend/bin/make_mixture.py
     fi
 
     for simu_opts_sil_scale in 2; do
@@ -87,7 +87,7 @@ if [ $stage -le 1 ]; then
                     --sil_scale $simu_opts_sil_scale \
                     data/$dset data/musan_bgnoise data/simu_rirs_8k \
                     \> $simudir/.work/mixture_$simuid.scp
-                nj=100
+                nj=10
                 mkdir -p $simudir/wav/$simuid
                 # distribute simulated data to $simu_actual_dir
                 split_scps=

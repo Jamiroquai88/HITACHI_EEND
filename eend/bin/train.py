@@ -3,6 +3,10 @@
 # Copyright 2019 Hitachi, Ltd. (author: Yusuke Fujita)
 # Licensed under the MIT license.
 #
+
+import sys
+sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
+
 import yamlargparse
 from eend import system_info
 

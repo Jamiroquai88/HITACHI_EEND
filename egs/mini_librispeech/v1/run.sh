@@ -38,8 +38,8 @@ resume=-1
 set -eu
 
 # Parse the config file to set bash variables like: $train_frame_shift, $infer_gpu
-eval `yaml2bash.py --prefix train $train_config`
-eval `yaml2bash.py --prefix infer $infer_config`
+eval `../../../eend/bin/yaml2bash.py --prefix train $train_config`
+eval `../../../eend/bin/yaml2bash.py --prefix infer $infer_config`
 
 # Append gpu reservation flag to the queuing command
 if [ $train_gpu -le 0 ]; then
@@ -79,7 +79,7 @@ if [ $stage -le 1 ]; then
     work=$model_dir/.work
     mkdir -p $work
     $train_cmd $work/train.log \
-        train.py \
+        ../../../eend/bin/train.py \
             -c $train_config \
             $train_args \
             $train_set $valid_set $model_dir \
@@ -95,7 +95,7 @@ if [ $stage -le 2 ]; then
         exit 1
     fi
     models=`eval echo $model_dir/snapshot_epoch-{$average_start..$average_end}`
-    model_averaging.py $model_dir/$ave_id.nnet.npz $models || exit 1
+    ../../../eend/bin/model_averaging.py $model_dir/$ave_id.nnet.npz $models || exit 1
 fi
 
 infer_dir=exp/diarize/infer/$model_id.$ave_id.$infer_config_id
@@ -110,7 +110,7 @@ if [ $stage -le 3 ]; then
         work=$infer_dir/$dset/.work
         mkdir -p $work
         $infer_cmd $work/infer.log \
-            infer.py \
+            ../../../eend/bin/infer.py \
             -c $infer_config \
             $infer_args \
             data/simu/data/$dset \
@@ -134,7 +134,7 @@ if [ $stage -le 4 ]; then
         find $infer_dir/$dset -iname "*.h5" > $work/file_list_$dset
         for med in 1 11; do
         for th in 0.3 0.4 0.5 0.6 0.7; do
-        make_rttm.py --median=$med --threshold=$th \
+        ../../../eend/bin/make_rttm.py --median=$med --threshold=$th \
             --frame_shift=$infer_frame_shift --subsampling=$infer_subsampling --sampling_rate=$infer_sampling_rate \
             $work/file_list_$dset $scoring_dir/$dset/hyp_${th}_$med.rttm
         md-eval.pl -c 0.25 \

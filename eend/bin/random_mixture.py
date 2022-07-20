@@ -40,6 +40,9 @@ The actual data dir and wav files are generated using make_mixture.py:
         wav/mixture               # output wav dir
 """
 
+import sys
+sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
+
 import argparse
 import os
 from eend import kaldi_data
@@ -47,6 +50,7 @@ import random
 import numpy as np
 import json
 import itertools
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir',

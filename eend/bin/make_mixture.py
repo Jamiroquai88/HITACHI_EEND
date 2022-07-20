@@ -10,6 +10,8 @@
 #     data/mixture \
 #     wav/mixture
 
+import sys
+sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
 
 import argparse
 import os
