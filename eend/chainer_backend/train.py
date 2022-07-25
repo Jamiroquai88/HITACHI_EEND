@@ -4,6 +4,8 @@
 # Licensed under the MIT license.
 #
 import os
+import json
+
 import numpy as np
 import chainer
 from chainer import optimizers
@@ -11,6 +13,8 @@ from chainer import serializers
 from chainer import iterators
 from chainer import training
 from chainer.training import extensions
+import wandb
+
 from eend.chainer_backend.models import BLSTMDiarization
 from eend.chainer_backend.models import TransformerDiarization, TransformerEDADiarization
 from eend.chainer_backend.transformer import NoamScheduler
@@ -38,6 +42,15 @@ def train(args):
     np.random.seed(args.seed)
     os.environ['CHAINER_SEED'] = str(args.seed)
     chainer.global_config.cudnn_deterministic = True
+
+    wandb.login(
+        host="http://wandb.speech-rnd.internal",
+        key="local-473ad2cf1f9ed9023faf837048e75943e1bbe7c5"
+    )
+    wandb.init(
+        project='Jan_DIAR-91',
+        config=args,
+    )
 
     train_set = KaldiDiarizationDataset(
         args.train_data_dir,
@@ -221,4 +234,14 @@ def train(args):
     trainer.extend(extensions.dump_graph('main/loss', out_name="cg.dot"))
 
     trainer.run()
+    with open(os.path.join(args.model_save_dir, 'log')) as f:
+        for metrics in json.load(f):
+            wandb.log({
+                'epoch': metrics['epoch'],
+                'train_loss': metrics['main/loss'],
+                'validation_loss': metrics['validation/main/loss'],
+                'train_DER': metrics['main/DER'],
+                'validation_DER': metrics['validation/main/DER']
+            })
+
     print('Finished!')

@@ -8,15 +8,15 @@ stage=0
 # The datasets for training must be formatted as kaldi data directory.
 # Also, make sure the audio files in wav.scp are 'regular' wav files.
 # Including piped commands in wav.scp makes training very slow
-train_set=data/simu/data/train_clean_5_ns2_beta2_500
+train_set=data/simu/data/verbatim2_ns2_beta2_500
 valid_set=data/simu/data/dev_clean_2_ns2_beta2_500
 
 # Base config files for {train,infer}.py
-train_config=conf/train.yaml
-infer_config=conf/infer.yaml
+#train_config=conf/train.yaml
+#infer_config=conf/infer.yaml
 # If you want to use EDA-EEND, uncommend two lines below.
-# train_config=conf/eda/train.yaml
-# infer_config=conf/eda/infer.yaml
+train_config=conf/eda/train.yaml
+infer_config=conf/eda/infer.yaml
 
 # Additional arguments passed to {train,infer}.py.
 # You need not edit the base config files above
@@ -24,8 +24,8 @@ train_args=
 infer_args=
 
 # Model averaging options
-average_start=8
-average_end=10
+average_start=40
+average_end=50
 
 # Resume training from snapshot at this epoch
 # TODO: not tested
@@ -106,14 +106,14 @@ if [ $stage -le 3 ]; then
         echo " if you want to retry, please remove it."
         exit 1
     fi
-    for dset in dev_clean_2_ns2_beta2_500; do
+    for dset in temi_201902; do
         work=$infer_dir/$dset/.work
         mkdir -p $work
         $infer_cmd $work/infer.log \
             ../../../eend/bin/infer.py \
             -c $infer_config \
             $infer_args \
-            data/simu/data/$dset \
+            data/$dset \
             $model_dir/$ave_id.nnet.npz \
             $infer_dir/$dset \
             || exit 1
@@ -128,25 +128,27 @@ if [ $stage -le 4 ]; then
         echo " if you want to retry, please remove it."
         exit 1
     fi
-    for dset in dev_clean_2_ns2_beta2_500; do
+    for dset in temi_201902; do
         work=$scoring_dir/$dset/.work
         mkdir -p $work
         find $infer_dir/$dset -iname "*.h5" > $work/file_list_$dset
-        for med in 1 11; do
-        for th in 0.3 0.4 0.5 0.6 0.7; do
-        ../../../eend/bin/make_rttm.py --median=$med --threshold=$th \
-            --frame_shift=$infer_frame_shift --subsampling=$infer_subsampling --sampling_rate=$infer_sampling_rate \
-            $work/file_list_$dset $scoring_dir/$dset/hyp_${th}_$med.rttm
-        md-eval.pl -c 0.25 \
-            -r data/simu/data/$dset/rttm \
-            -s $scoring_dir/$dset/hyp_${th}_$med.rttm > $scoring_dir/$dset/result_th${th}_med${med}_collar0.25 2>/dev/null || exit
-        done
+        for med in 1 11
+        do
+            for th in 0.3 0.4 0.5 0.6 0.7
+            do
+                ../../../eend/bin/make_rttm.py --median=$med --threshold=$th \
+                    --frame_shift=$infer_frame_shift --subsampling=$infer_subsampling --sampling_rate=$infer_sampling_rate \
+                    $work/file_list_$dset $scoring_dir/$dset/hyp_${th}_$med.rttm
+                md-eval-22.pl -c 0.25 \
+                    -r data/$dset/rttm \
+                    -s $scoring_dir/$dset/hyp_${th}_$med.rttm > $scoring_dir/$dset/result_th${th}_med${med}_collar0.25 2>/dev/null
+            done
         done
     done
 fi
 
 if [ $stage -le 5 ]; then
-    for dset in dev_clean_2_ns2_beta2_500; do
+    for dset in temi_201902; do
         best_score.sh $scoring_dir/$dset
     done
 fi
