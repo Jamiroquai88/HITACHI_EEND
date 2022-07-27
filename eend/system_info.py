@@ -14,4 +14,4 @@ def print_system_info():
     print(f"chainer version: {chainer.__version__}")
     print(f"cupy version: {cupy.__version__}")
     print(f"cuda version: {cupy.cuda.runtime.runtimeGetVersion()}")
-    print(f"cudnn version: {cudnn.getVersion()}")
+    # print(f"cudnn version: {cudnn.getVersion()}")

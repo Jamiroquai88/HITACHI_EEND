@@ -154,7 +154,7 @@ def train(args):
         repeat=True, shuffle=True,
         # shared_mem=64000000,
         shared_mem=None,
-        n_processes=4, n_prefetch=2)
+        n_processes=args.n_processes, n_prefetch=2)
 
     dev_iter = iterators.MultiprocessIterator(
         dev_set,
@@ -162,7 +162,7 @@ def train(args):
         repeat=False, shuffle=False,
         # shared_mem=64000000,
         shared_mem=None,
-        n_processes=4, n_prefetch=2)
+        n_processes=args.n_processes, n_prefetch=2)
 
     if args.gradient_accumulation_steps > 1:
         updater = GradientAccumulationUpdater(

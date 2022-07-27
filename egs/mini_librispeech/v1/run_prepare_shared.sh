@@ -15,7 +15,7 @@ stage=0
 
 # This script distributes simulated data under these directories
 simu_actual_dirs=(
-$PWD/data/local/diarization-data
+/data/experiments/DIAR-92/data/local/diarization-data
 )
 
 # simulation options
@@ -75,8 +75,9 @@ if [ $stage -le 1 ]; then
     fi
 
     for simu_opts_sil_scale in 2; do
-        for dset in train_clean_5 dev_clean_2; do
-            n_mixtures=500
+        #for dset in kaldi_force-15-1spk-sw-filtered train_clean_5 dev_clean_2; do
+        for dset in dev_clean_2; do
+            n_mixtures=1000
             simuid=${dset}_ns${simu_opts_num_speaker}_beta${simu_opts_sil_scale}_${n_mixtures}
             # check if you have the simulation
             if ! validate_data_dir.sh --no-text --no-feats $simudir/data/$simuid; then
@@ -87,7 +88,7 @@ if [ $stage -le 1 ]; then
                     --sil_scale $simu_opts_sil_scale \
                     data/$dset data/musan_bgnoise data/simu_rirs_8k \
                     \> $simudir/.work/mixture_$simuid.scp
-                nj=10
+                nj=50
                 mkdir -p $simudir/wav/$simuid
                 # distribute simulated data to $simu_actual_dir
                 split_scps=

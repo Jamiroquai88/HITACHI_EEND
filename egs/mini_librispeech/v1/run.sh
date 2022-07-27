@@ -8,15 +8,15 @@ stage=0
 # The datasets for training must be formatted as kaldi data directory.
 # Also, make sure the audio files in wav.scp are 'regular' wav files.
 # Including piped commands in wav.scp makes training very slow
-train_set=data/simu/data/verbatim2_ns2_beta2_500
-valid_set=data/simu/data/dev_clean_2_ns2_beta2_500
+train_set=data/simu/data/kaldi_force-15-1spk-sw-filtered_ns2_beta2_500000
+valid_set=data/simu/data/dev_clean_2_ns2_beta2_1000
 
 # Base config files for {train,infer}.py
-#train_config=conf/train.yaml
-#infer_config=conf/infer.yaml
+train_config=conf/train.yaml
+infer_config=conf/infer.yaml
 # If you want to use EDA-EEND, uncommend two lines below.
-train_config=conf/eda/train.yaml
-infer_config=conf/eda/infer.yaml
+#train_config=conf/eda/train.yaml
+#infer_config=conf/eda/infer.yaml
 
 # Additional arguments passed to {train,infer}.py.
 # You need not edit the base config files above

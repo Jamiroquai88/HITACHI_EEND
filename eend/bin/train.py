@@ -4,8 +4,9 @@
 # Licensed under the MIT license.
 #
 
+import os
 import sys
-sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
 
 import yamlargparse
 from eend import system_info
@@ -67,6 +68,7 @@ parser.add_argument('--transformer-encoder-n-layers', default=2, type=int)
 parser.add_argument('--transformer-encoder-dropout', default=0.1, type=float)
 parser.add_argument('--gradient-accumulation-steps', default=1, type=int)
 parser.add_argument('--seed', default=777, type=int)
+parser.add_argument('--n-processes', default=4, type=int)
 
 attractor_args = parser.add_argument_group('attractor')
 attractor_args.add_argument('--use-attractor', action='store_true',

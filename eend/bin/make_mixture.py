@@ -10,11 +10,11 @@
 #     data/mixture \
 #     wav/mixture
 
+import os
 import sys
-sys.path.append('/shared/workspaces/jprofant/GitHub/HITACHI_EEND')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
 
 import argparse
-import os
 from eend import kaldi_data
 import numpy as np
 import math
